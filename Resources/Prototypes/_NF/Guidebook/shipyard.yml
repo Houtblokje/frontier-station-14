@@ -14,11 +14,18 @@
   - ShipyardLiquidator
   - ShipyardPioneer
   - ShipyardSearchlight
+  - ShipyardFiction
 
 - type: guideEntry
   id: ShipyardAmbition
   name: guide-entry-shipyard-ambition
   text: "/ServerInfo/_NF/Guidebook/Shipyard/Ambition.xml"
+  
+  
+- type: guideEntry
+  id: ShipyardFiction
+  name: guide-entry-shipyard-fiction
+  text: "/ServerInfo/_NF/Guidebook/Shipyard/Fiction.xml"
 
 - type: guideEntry
   id: ShipyardBrigand

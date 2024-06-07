@@ -1,0 +1,29 @@
+- type: vessel
+  id: Fiction
+  name: NT Fiction
+  description: A familiar looking ship made for hosting and broadcasting your own science-fiction tv shows while boldly going where no one has gone before. Well, i guess it is science-reality now. 
+  price: 28500
+  category: Medium
+  group: Civilian
+  shuttlePath: /Maps/_NF/Shuttles/fiction.yml
+
+- type: gameMap
+  id: Fiction
+  mapName: 'NT Fiction'
+  mapPath: /Maps/_NF/Shuttles/fiction.yml
+  minPlayers: 0
+  stations:
+    Fiction:
+      stationProto: StandardFrontierVessel
+      components:
+        - type: StationNameSetup
+          mapNameTemplate: 'Fiction {1}'
+          nameGenerator:
+            !type:NanotrasenNameGenerator
+            prefixCreator: '14'
+        - type: StationJobs
+          overflowJobs: []
+          availableJobs:
+            Contractor: [ 0, 0 ]
+            Pilot: [ 0, 0 ]
+            Mercenary: [ 0, 0 ]
