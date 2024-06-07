@@ -306,3 +306,8 @@ Resources/MapImages
 
 # Direnv stuff
 .direnv/
+runclient.bat
+runserver.bat
+screenshot.py
+runclient.bat
+runserver.bat
