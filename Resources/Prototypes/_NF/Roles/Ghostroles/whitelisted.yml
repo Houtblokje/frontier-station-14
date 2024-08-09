@@ -45,6 +45,14 @@
   rules: ghost-role-component-default-rules
   entityPrototype: MobMonkeyPunpun
   whitelisted: true
+  
+  - type: ghostRole
+  id: MonkeyPunpun
+  name: ghost-role-information-audrey-name
+  description: ghost-role-information-audrey-description
+  rules: ghost-role-component-default-rules
+  entityPrototype: MobXenoQueenAudrey
+  whitelisted: true
 
 - type: ghostRole
   id: SentientArtifact

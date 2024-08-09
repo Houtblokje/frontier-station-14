@@ -3,20 +3,32 @@
   name: job-name-zookeeper
   description: job-description-zookeeper
   playTimeTracker: JobZookeeper
-  setPreference: false # Frontier
+  setPreference: true # Frontier
+  alwaysUseSpawner: true
+  canBeAntag: false # Frontier
   requirements:
     - !type:OverallPlaytimeRequirement
       time: 10800
   startingGear: ZookeeperGear
   icon: "JobIconZookeeper"
-  supervisors: job-supervisors-hire # Frontier
+  supervisors: job-supervisors-sr # Frontier
   accessGroups: # Frontier
-  - GeneralAccess # Frontier
+  - Maintenance
+  - External # Frontier
+  - Service
+  - Frontier # Frontier
+  - Zookeeper # Frontier
+  special:
+  - !type:AddImplantSpecial
+    implants: [ MindShieldImplant ]
+  - !type:GiveItemOnHolidaySpecial # Frontier
+    holiday: FrontierBirthday # Frontier
+    prototype: FrontierBirthdayGift # Frontier
 
 - type: startingGear
   id: ZookeeperGear
   equipment:
-    jumpsuit: ClothingUniformJumpsuitSafari
+  # jumpsuit: ClothingUniformJumpsuitSafari
     head: ClothingHeadSafari
     shoes: ClothingShoesColorWhite
     id: ZookeeperPDA

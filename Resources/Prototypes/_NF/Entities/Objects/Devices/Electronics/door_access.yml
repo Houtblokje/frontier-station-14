@@ -30,6 +30,14 @@
   components:
   - type: AccessReader
     access: [["Mail"]]
+    
+- type: entity
+  parent: DoorElectronics
+  id: DoorElectronicsZookeeper
+  suffix: Zoo, Locked
+  components:
+  - type: AccessReader
+    access: [["Zookeeper"]]
 
 - type: entity
   parent: DoorElectronics

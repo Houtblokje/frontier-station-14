@@ -1,0 +1,10 @@
+- type: loadout
+  id: ZookeeperClothingUniformJumpsuitSafari
+  equipment: ZookeeperClothingUniformJumpsuitSafari
+  price: 0
+  
+- type: startingGear
+  id: ZookeeperClothingUniformJumpsuitSafari
+  equipment:
+    jumpsuit: ClothingUniformJumpsuitSafari
+

@@ -1,0 +1,7 @@
+- type: loadoutGroup
+  id: ZookeeperJumpsuit
+  name: loadout-group-contractor-jumpsuit
+  loadouts:
+  - ZookeeperClothingUniformJumpsuitSafari
+  fallbacks:
+  - ZookeeperClothingUniformJumpsuitSafari

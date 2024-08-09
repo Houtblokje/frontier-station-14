@@ -14,6 +14,20 @@
       - id: Plunger
 
 - type: entity
+  id: LockerZookeeperFilled
+  suffix: Filled
+  parent: LockerQuarterMaster
+  components:
+  - type: StorageFill
+    contents:
+      - id: ClothingHeadsetService
+      - id: MopItem
+      - id: BoxMousetrap
+      - id: BoxTrashbag
+      - id: BoxLightMixed
+      - id: Plunger
+
+- type: entity
   id: LockerClownFilled
   suffix: Filled
   parent: LockerClown

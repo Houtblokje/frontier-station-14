@@ -84,6 +84,23 @@
   - ContractorImplanter
   - ContractorFun
   - ContractorTrinkets
+  
+- type: roleLoadout
+  id: JobZookeeper
+  groups:
+  - GroupTankHarness
+  - ContractorNeck
+  - ZookeeperJumpsuit
+  - ContractorBackpack
+  - ContractorShoes
+  - ContractorFace
+  - ContractorGlasses
+  - ContractorBelt
+  - ContractorBoxSurvival
+  - ContractorEncryptionKey
+  - ContractorImplanter
+  - ContractorFun
+  - ContractorTrinkets
 
 - type: roleLoadout
   id: JobMailCarrier

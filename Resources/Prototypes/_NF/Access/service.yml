@@ -1,0 +1,4 @@
+- type: accessLevel
+  id: Zookeeper
+  name: id-card-access-level-zookeeper
+

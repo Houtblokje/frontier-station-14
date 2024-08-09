@@ -36,3 +36,17 @@
   - type: ConditionalSpawner
     prototypes:
       - MobCatCappy
+      
+
+- type: entity
+  name: Audrey Spawner
+  id: SpawnMobXenoQueenAudrey
+  parent: MarkerBase
+  components:
+  - type: Sprite
+    layers:
+      - state: green
+      - state: ai
+  - type: ConditionalSpawner
+    prototypes:
+      - MobXenoQueenAudrey

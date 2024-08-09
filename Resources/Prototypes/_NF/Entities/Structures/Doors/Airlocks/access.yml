@@ -251,3 +251,48 @@
   - type: ContainerFill
     containers:
       board: [ DoorElectronicsMailCarrier ]
+      
+- type: entity
+  parent: AirlockExternalGlass
+  id: AirlockExternalGlassZookeeperLocked
+  suffix: Zoo, Glass, Locked
+  components:
+  - type: ContainerFill
+    containers:
+      board: [ DoorElectronicsZookeeper ]
+
+- type: entity
+  parent: AirlockGlass
+  id: AirlockZookeeperGlassLocked
+  suffix: Zoo, Locked
+  components:
+  - type: ContainerFill
+    containers:
+      board: [ DoorElectronicsZookeeper ]
+      
+- type: entity
+  parent: AirlockServiceLocked
+  id: AirlockZookeeperLocked
+  suffix: Zoo, Locked
+  components:
+  - type: ContainerFill
+    containers:
+      board: [ DoorElectronicsZookeeper ]
+      
+- type: entity
+  parent: AirlockMaintCommandLocked
+  id: AirlockMaintZookeeperLocked
+  suffix: Zoo, Locked
+  components:
+  - type: ContainerFill
+    containers:
+      board: [ DoorElectronicsZookeeper ]
+      
+- type: entity
+  parent: HighSecDoor
+  id: HighSecZooLocked
+  suffix: Zoo, Locked
+  components:
+  - type: ContainerFill
+    containers:
+      board: [ DoorElectronicsZookeeper ]

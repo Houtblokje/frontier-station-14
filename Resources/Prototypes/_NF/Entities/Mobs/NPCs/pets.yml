@@ -190,3 +190,25 @@
   - type: NpcFactionMember
     factions:
       - Cat
+
+
+- type: entity
+  name: Audrey
+  parent: MobXenoQueen
+  id: MobXenoQueenAudrey
+  description: A prominent representative of monkeys with unlimited access to alcohol.
+  components:
+  - type: GhostRole
+    prob: 1
+    makeSentient: true
+    allowSpeech: true
+    allowMovement: true
+    prototype: MonkeyPunpun # Frontier
+    name: ghost-role-information-punpun-name
+    description: ghost-role-information-punpun-description
+    rules: ghost-role-information-nonantagonist-rules
+  - type: GhostTakeoverAvailable
+  - type: Tag
+    tags:
+    - CannotSuicide
+    - VimPilot
