@@ -8,11 +8,14 @@
   canBeAntag: false # Frontier
   requirements:
     - !type:OverallPlaytimeRequirement
-      time: 10800
+      time: 54000
+    - !type:RoleTimeRequirement
+      role: JobValet
+      time: 10800 #10 hrs
   startingGear: ZookeeperGear
   icon: "JobIconZookeeper"
   supervisors: job-supervisors-sr # Frontier
-  accessGroups: # Frontier
+  access: # Frontier
   - Maintenance
   - External # Frontier
   - Service
@@ -28,9 +31,9 @@
 - type: startingGear
   id: ZookeeperGear
   equipment:
-  # jumpsuit: ClothingUniformJumpsuitSafari
+  # jumpsuit: ClothingUniformJumpsuitSafari #Frontier
     head: ClothingHeadSafari
-    shoes: ClothingShoesColorWhite
+  #  shoes: ClothingShoesColorWhite #Frontier
     id: ZookeeperPDA
     ears: ClothingHeadsetService
   #storage:

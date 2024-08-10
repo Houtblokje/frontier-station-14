@@ -1,0 +1,33 @@
+# Author Info
+# GitHub: 
+# Discord: houtblokje_
+
+# Maintainer Info
+# GitHub: ???
+# Discord: ???
+
+# Notes:
+# Zoo for collecting and viewing rare animals.
+- type: pointOfInterest
+  id: Zoo
+  name: Frontier Zoo
+  rangeMin: 2700
+  rangeMax: 5500
+  iffColor: "#ffa600" 
+  gridPath: /Maps/_NF/POI/zoo.yml
+  
+- type: gameMap
+  id: Zoo
+  mapName: 'Frontier Zoo'
+  mapPath: /Maps/_NF/POI/zoo.yml
+  minPlayers: 0
+  stations:
+    Zoo:
+      stationProto: StandardFrontierOutpost
+      components:
+        - type: StationNameSetup
+          mapNameTemplate: 'Frontier Zoo'
+        - type: StationJobs
+          availableJobs: 
+            Zookeeper: [ 1, 1 ]
+ 

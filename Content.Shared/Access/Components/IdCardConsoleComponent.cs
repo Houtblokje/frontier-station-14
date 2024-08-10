@@ -58,6 +58,7 @@ public sealed partial class IdCardConsoleComponent : Component
         //"Chemistry",
         //"ChiefEngineer",
         //"ChiefMedicalOfficer",
+	"Zookeeper", //Frontier
         "Command",
         //"Cryogenics",
         //"Engineering",

@@ -52,6 +52,7 @@
       - Service
       - StationTrafficController # Frontier
       - Theatre
+      - Zookeeper #Frontier
       privilegedIdSlot:
         name: id-card-console-privileged-id
         ejectSound: /Audio/Machines/id_swipe.ogg
@@ -127,6 +128,7 @@
     - CentralCommand
     - NuclearOperative
     - SyndicateAgent
+    - Zookeeper #Frontier
     privilegedIdSlot:
       name: id-card-console-privileged-id
       ejectSound: /Audio/Machines/id_swipe.ogg

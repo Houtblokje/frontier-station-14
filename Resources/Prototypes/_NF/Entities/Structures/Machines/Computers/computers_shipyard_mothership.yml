@@ -123,3 +123,14 @@
     - Parcel
 #  - type: AccessReader # Cannot lock it for mail since the inserted card will be missing from you
 #    access: [["Mail"]] # Cannot lock it for mail since the inserted card will be missing from you
+
+# Zoo console
+- type: entity
+  id: ZooMothershipComputer
+  parent: BaseMothershipComputer
+  name: zoo shipyard console
+  components:
+  - type: ShipyardListing
+    shuttles: 
+    - PTS
+# Currently only has the PTS, but gives opportunity to add ships for transporting creatures later.

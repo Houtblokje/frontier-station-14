@@ -37,7 +37,7 @@
     prototypes:
       - MobCatCappy
       
-
+# Zoo Spawners
 - type: entity
   name: Audrey Spawner
   id: SpawnMobXenoQueenAudrey
@@ -50,3 +50,42 @@
   - type: ConditionalSpawner
     prototypes:
       - MobXenoQueenAudrey
+
+- type: entity
+  name: Snake Spawner
+  id: SpawnMobSnake
+  parent: MarkerBase
+  components:
+  - type: Sprite
+    layers:
+      - state: green
+      - state: ai
+  - type: ConditionalSpawner
+    prototypes:
+      - MobSnake
+      
+- type: entity
+  name: Bat Spawner
+  id: SpawnMobBat
+  parent: MarkerBase
+  components:
+  - type: Sprite
+    layers:
+      - state: green
+      - state: ai
+  - type: ConditionalSpawner
+    prototypes:
+      - MobBat
+      
+- type: entity
+  name: Kangaroo Spawner
+  id: SpawnMobKangaroo
+  parent: MarkerBase
+  components:
+  - type: Sprite
+    layers:
+      - state: green
+      - state: ai
+  - type: ConditionalSpawner
+    prototypes:
+      - MobKangaroo
