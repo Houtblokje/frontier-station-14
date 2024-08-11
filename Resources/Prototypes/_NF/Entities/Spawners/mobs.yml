@@ -79,7 +79,7 @@
       
 - type: entity
   name: Kangaroo Spawner
-  id: SpawnMobKangaroo
+  id: SpawnMobKangarooRegular
   parent: MarkerBase
   components:
   - type: Sprite

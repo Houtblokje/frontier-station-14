@@ -27,6 +27,7 @@
   - Passenger
   - Reporter
   - Visitor
+# - Zookeeper #Frontier
   - ServiceWorker
   - Contractor # Frontier
   - Mercenary # Frontier

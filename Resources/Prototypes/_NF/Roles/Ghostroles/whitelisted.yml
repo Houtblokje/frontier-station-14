@@ -47,7 +47,7 @@
   whitelisted: true
   
   - type: ghostRole
-  id: MonkeyPunpun
+  id: XenoQueenAudrey
   name: ghost-role-information-audrey-name
   description: ghost-role-information-audrey-description
   rules: ghost-role-component-default-rules

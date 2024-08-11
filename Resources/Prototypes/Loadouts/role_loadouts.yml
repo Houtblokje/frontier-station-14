@@ -472,15 +472,15 @@
   - GroupSpeciesBreathToolMedical
 
 # Wildcards
-- type: roleLoadout
-  id: JobZookeeper
-  groups:
-  - GroupTankHarness
-  - CommonBackpack
-  - Glasses
-  - Survival
-  - Trinkets
-  - GroupSpeciesBreathTool
+#- type: roleLoadout # Frontier, loadout for this role is in /_NF/Loadouts
+#  id: JobZookeeper
+#  groups:
+#  - GroupTankHarness
+#  - CommonBackpack
+#  - Glasses
+#  - Survival
+#  - Trinkets
+#  - GroupSpeciesBreathTool
 
 - type: roleLoadout
   id: JobReporter
