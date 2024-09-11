@@ -62,3 +62,26 @@
     - Pickaxe
   - type: StaticPrice
     price: 200
+
+- type: entity
+  name: E-Girl
+  parent: [BaseC3ExpeditionContraband, EnergySword] #not really expedition contraband, but it had the base values I liked.
+  id: EnergySwordMail
+  description: A very loud & but not so dangerous sword with a beam made of pure, concentrated gamer energy. Very illegal, for reasons that do not involve CentCom wanting these for their own time.
+  components:
+  - type: EnergySword
+    colorOptions:
+      - "#f56cdc"
+    blockHacking: true
+  - type: ItemToggleMeleeWeapon
+    activatedDamage:
+        types: # No real damage, but it does do structure damage.
+          Heat: 1
+          Piercing: 0
+          Structural: 7
+  - type: MeleeWeapon
+    wideAnimationRotation: -135
+    attackRate: 1
+    damage:
+      types:
+        Blunt: 0
