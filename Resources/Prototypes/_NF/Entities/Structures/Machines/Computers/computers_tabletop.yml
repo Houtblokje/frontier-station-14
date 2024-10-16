@@ -816,7 +816,7 @@
     layers:
     - map: ["computerLayerBody"]
       sprite: _NF/Structures/Machines/computer_tabletop.rsi
-      state: computer_tabletop
+      state: broken_tabletop
     - map: ["computerLayerKeyboard"]
       sprite: _NF/Structures/Machines/computer_tabletop.rsi
       state: generic_keyboard_tabletop

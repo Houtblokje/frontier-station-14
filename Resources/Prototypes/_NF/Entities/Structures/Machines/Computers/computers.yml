@@ -441,9 +441,8 @@
   - type: Sprite #Currently uses syndicate comms sprite, should probably get its own sprite
     layers:
     - map: ["computerLayerBody"]
-      state: broken 
-    - map: ["computerLayerKeyboard"]
-      state: generic_keyboard
+      sprite: _NF/Structures/Machines/computers.rsi
+      state: computer_blackmarket
     - map: ["computerLayerScreen"]
       state: comm_syndie
     - map: ["computerLayerKeys"]
