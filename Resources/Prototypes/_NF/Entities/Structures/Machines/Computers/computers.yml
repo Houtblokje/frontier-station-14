@@ -441,7 +441,7 @@
   - type: Sprite #Currently uses syndicate comms sprite, should probably get its own sprite
     layers:
     - map: ["computerLayerBody"]
-      state: computer
+      state: broken 
     - map: ["computerLayerKeyboard"]
       state: generic_keyboard
     - map: ["computerLayerScreen"]
@@ -459,8 +459,8 @@
     global: true #announce to everyone they're about to loot the sector dry
     sound: /Audio/Misc/Notice1.ogg
   - type: Computer
-    board: SyndicateCommsComputerCircuitboard
+    board: PirateCommsComputerCircuitboard
   - type: PointLight
-    radius: 1.5
-    energy: 1.6
+    radius: 2.5
+    energy: 0.8
     color: "#f71713"

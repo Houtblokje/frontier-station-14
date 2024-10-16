@@ -231,7 +231,7 @@
   productEntity: PirateCommsComputerCircuitboard
   icon: { sprite: Objects/Misc/module.rsi, state: cpuboard }
   cost:
-    Doubloon: 14
+    Doubloon: 15
   categories:
     - UplinkPirateUtility
   conditions:
