@@ -431,3 +431,36 @@
   components:
   - type: NFDroneConsole
     id: Trade
+
+- type: entity
+  parent: ComputerComms
+  id: PirateComputerComms
+  name: pirate communications computer
+  description: A computer stolen from the syndicate, capable of remotely hacking into the station's communications systems. Use this to make your demands crystal clear!
+  components:
+  - type: Sprite #Currently uses syndicate comms sprite, should probably get its own sprite
+    layers:
+    - map: ["computerLayerBody"]
+      state: computer
+    - map: ["computerLayerKeyboard"]
+      state: generic_keyboard
+    - map: ["computerLayerScreen"]
+      state: comm_syndie
+    - map: ["computerLayerKeys"]
+      state: syndie_key
+    - map: [ "enum.WiresVisualLayers.MaintenancePanel" ]
+      state: generic_panel_open
+  - type: AccessReader
+    access: [[ "PirateCaptain" ]]
+  - type: CommunicationsConsole
+    title: comms-console-announcement-title-pirate
+    color: "#C83737"
+    canShuttle: false
+    global: true #announce to everyone they're about to loot the sector dry
+    sound: /Audio/Misc/Notice1.ogg
+  - type: Computer
+    board: SyndicateCommsComputerCircuitboard
+  - type: PointLight
+    radius: 1.5
+    energy: 1.6
+    color: "#f71713"

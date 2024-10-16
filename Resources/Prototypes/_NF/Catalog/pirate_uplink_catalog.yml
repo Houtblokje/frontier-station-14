@@ -225,6 +225,25 @@
         - PirateCaptain
 
 - type: listing
+  id: UplinkPirateCommsComputerCircuitboard
+  name:  uplink-pirate-commscomputer-name
+  description: uplink-pirate-commscomputer-desc
+  productEntity: PirateCommsComputerCircuitboard
+  icon: { sprite: Objects/Misc/module.rsi, state: cpuboard }
+  cost:
+    Doubloon: 14
+  categories:
+    - UplinkPirateUtility
+  conditions:
+    - !type:StoreWhitelistCondition
+      whitelist:
+        tags:
+          - PirateUplink
+    - !type:BuyerJobCondition
+      whitelist:
+        - PirateCaptain
+
+- type: listing
   id: UplinkPirateAnchor
   name:  uplink-pirate-anchor-name
   description: uplink-pirate-anchor-desc

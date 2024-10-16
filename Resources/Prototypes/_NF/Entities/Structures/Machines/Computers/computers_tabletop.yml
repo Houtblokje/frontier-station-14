@@ -806,3 +806,23 @@
   - type: Sprite
     drawdepth: SmallObjects
     layers: *NFTabletopShuttleConsoleVisuals
+
+- type: entity
+  parent: [BaseStructureComputerTabletop, PirateComputerComms] 
+  id: PirateComputerTabletopComms
+  components:
+  - type: Sprite #Currently uses syndicate comms sprite, should probably get its own sprite
+    drawdepth: SmallObjects
+    layers:
+    - map: ["computerLayerBody"]
+      sprite: _NF/Structures/Machines/computer_tabletop.rsi
+      state: computer_tabletop
+    - map: ["computerLayerKeyboard"]
+      sprite: _NF/Structures/Machines/computer_tabletop.rsi
+      state: generic_keyboard_tabletop
+    - map: ["computerLayerScreen"]
+      sprite: Structures/Machines/computers.rsi
+      state: comm_syndie
+    - map: ["computerLayerKeys"]
+      sprite: Structures/Machines/computers.rsi
+      state: syndie_key

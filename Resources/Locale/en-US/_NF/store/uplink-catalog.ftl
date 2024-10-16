@@ -212,3 +212,5 @@ uplink-pirate-greengrenade-name = Green Pirate Grenade
 uplink-pirate-greengrenade-desc = A foul-smelling grenade that makes you feel fuzzy.
 uplink-pirate-graygrenade-name = Gray Pirate Grenade
 uplink-pirate-graygrenade-desc = A solid grenade that feels like a cannonball.
+uplink-pirate-commscomputer-name = Pirate Communications Computer Circuitboard
+uplink-pirate-commscomputer-desc = A computer stolen from the syndicate, capable of remotely hacking into the station's communications systems. Manual assembly required.

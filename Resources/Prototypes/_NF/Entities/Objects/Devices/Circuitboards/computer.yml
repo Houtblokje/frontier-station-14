@@ -24,3 +24,14 @@
     prototype: ComputerAdvancedRadar
   - type: ComputerTabletopBoard # Frontier
     prototype: ComputerTabletopAdvancedRadar # Frontier
+    
+- type: entity
+  parent: [ BaseComputerCircuitboard, BaseC3PirateContraband ] # Frontier: BaseSyndicateContraband<BaseC3PirateContraband
+  id: PirateCommsComputerCircuitboard
+  name: pirate communications computer board
+  description: A computer printed circuit board for a pirate communications console.
+  components:
+    - type: ComputerBoard
+      prototype: PirateComputerComms
+    - type: ComputerTabletopBoard # Frontier
+      prototype: PirateComputerTabletopComms # Frontier
