@@ -1,8 +1,3 @@
-/*
- * New Frontiers - This file is licensed under AGPLv3
- * Copyright (c) 2024 New Frontiers
- * See AGPLv3.txt for details.
- */
 using System.Linq;
 using System.Net.Http;
 using System.Numerics;
@@ -10,9 +5,9 @@ using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
-using Content._NF.Shared.GameRule;
+using Content.Shared._NF.GameRule;
 using Content.Server.Procedural;
-using Content.Shared.Bank.Components;
+using Content.Server._NF.GameTicking.Events;
 using Content.Shared.Procedural;
 using Robust.Server.GameObjects;
 using Robust.Server.Maps;
@@ -30,8 +25,20 @@ using Content.Server.GameTicking.Rules;
 using Content.Server.Maps;
 using Content.Server.Station.Systems;
 using Content.Shared.CCVar;
-using Content.Shared.NF14.CCVar;
+using Content.Shared._NF.CCVar; // Frontier
 using Robust.Shared.Configuration;
+using Robust.Shared.Physics.Components;
+using Content.Server.Shuttles.Components;
+using Content.Shared._NF.Bank;
+using Content.Shared.Tiles;
+using Content.Server._NF.PublicTransit.Components;
+using Content.Server._NF.GameRule.Components;
+using Content.Server.Bank;
+using Robust.Shared.Player;
+using Robust.Shared.Network;
+using Content.Shared.GameTicking;
+using Robust.Shared.Enums;
+using Robust.Server.Player;
 
 namespace Content.Server._NF.GameRule;
 
@@ -43,17 +50,42 @@ public sealed class NfAdventureRuleSystem : GameRuleSystem<AdventureRuleComponen
     [Dependency] private readonly IPrototypeManager _prototypeManager = default!;
     [Dependency] private readonly IRobustRandom _random = default!;
     [Dependency] private readonly IConfigurationManager _configurationManager = default!;
+    [Dependency] private readonly IPlayerManager _playerManager = default!;
     [Dependency] private readonly MapLoaderSystem _map = default!;
     [Dependency] private readonly MetaDataSystem _meta = default!;
     [Dependency] private readonly DungeonSystem _dunGen = default!;
     [Dependency] private readonly IConsoleHost _console = default!;
     [Dependency] private readonly StationSystem _station = default!;
     [Dependency] private readonly ShuttleSystem _shuttle = default!;
+    [Dependency] private readonly PhysicsSystem _physics = default!;
+    [Dependency] private readonly BankSystem _bank = default!;
 
     private readonly HttpClient _httpClient = new();
 
+    public sealed class PlayerRoundBankInformation
+    {
+        // Initial balance, obtained on spawn
+        public int StartBalance;
+        // Ending balance, obtained on game end or detach (NOTE: multiple detaches possible), whichever happens first.
+        public int EndBalance;
+        // Entity name: used for display purposes ("The Feel of Fresh Bills earned 100,000 spesos")
+        public string Name;
+        // User ID: used to validate incoming information.
+        // If, for whatever reason, another player takes over this character, their initial balance is inaccurate.
+        public NetUserId UserId;
+
+        public PlayerRoundBankInformation(int startBalance, string name, NetUserId userId)
+        {
+            StartBalance = startBalance;
+            EndBalance = -1;
+            Name = name;
+            UserId = userId;
+        }
+    }
+
+    // A list of player bank account information stored by the controlled character's entity.
     [ViewVariables]
-    private List<(EntityUid, int)> _players = new();
+    private Dictionary<EntityUid, PlayerRoundBankInformation> _players = new();
 
     private float _distanceOffset = 1f;
     private List<Vector2> _stationCoords = new();
@@ -65,46 +97,70 @@ public sealed class NfAdventureRuleSystem : GameRuleSystem<AdventureRuleComponen
     {
         base.Initialize();
         SubscribeLocalEvent<PlayerSpawnCompleteEvent>(OnPlayerSpawningEvent);
+        SubscribeLocalEvent<PlayerDetachedEvent>(OnPlayerDetachedEvent);
+        SubscribeLocalEvent<RoundRestartCleanupEvent>(OnRoundRestart);
+        _playerManager.PlayerStatusChanged += PlayerManagerOnPlayerStatusChanged;
     }
 
     protected override void AppendRoundEndText(EntityUid uid, AdventureRuleComponent component, GameRuleComponent gameRule, ref RoundEndTextAppendEvent ev)
     {
-        var profitText = Loc.GetString($"adventure-mode-profit-text");
-        var lossText = Loc.GetString($"adventure-mode-loss-text");
         ev.AddLine(Loc.GetString("adventure-list-start"));
         var allScore = new List<Tuple<string, int>>();
 
-        foreach (var player in _players)
+        foreach (var (player, playerInfo) in _players)
         {
-            if (!TryComp<BankAccountComponent>(player.Item1, out var bank) || !TryComp<MetaDataComponent>(player.Item1, out var meta))
+            var endBalance = playerInfo.EndBalance;
+            if (_bank.TryGetBalance(player, out var bankBalance))
+            {
+                endBalance = bankBalance;
+            }
+
+            // Check if endBalance is valid (non-negative)
+            if (endBalance < 0)
                 continue;
 
-            var profit = bank.Balance - player.Item2;
-            ev.AddLine($"- {meta.EntityName} {profitText} {profit} Spesos");
-            allScore.Add(new Tuple<string, int>(meta.EntityName, profit));
+            var profit = endBalance - playerInfo.StartBalance;
+            string summaryText;
+            if (profit < 0)
+            {
+                summaryText = Loc.GetString("adventure-list-loss", ("amount", BankSystemExtensions.ToSpesoString(-profit)));
+            }
+            else
+            {
+                summaryText = Loc.GetString("adventure-list-profit", ("amount", BankSystemExtensions.ToSpesoString(profit)));
+            }
+            ev.AddLine($"- {playerInfo.Name} {summaryText}");
+            allScore.Add(new Tuple<string, int>(playerInfo.Name, profit));
         }
 
         if (!(allScore.Count >= 1))
             return;
 
-        var relayText = Loc.GetString("adventure-list-high");
+        var relayText = Loc.GetString("adventure-webhook-list-high");
         relayText += '\n';
         var highScore = allScore.OrderByDescending(h => h.Item2).ToList();
 
-        for (var i = 0; i < 10 && i < highScore.Count; i++)
+        for (var i = 0; i < 10 && highScore.Count > 0; i++)
         {
-            relayText += $"{highScore.First().Item1} {profitText} {highScore.First().Item2} Spesos";
+            if (highScore.First().Item2 < 0)
+                break;
+            var profitText = Loc.GetString("adventure-webhook-top-profit", ("amount", BankSystemExtensions.ToSpesoString(highScore.First().Item2)));
+            relayText += $"{highScore.First().Item1} {profitText}";
             relayText += '\n';
-            highScore.Remove(highScore.First());
+            highScore.RemoveAt(0);
         }
-        relayText += Loc.GetString("adventure-list-low");
+        relayText += '\n'; // Extra line separating the highest and lowest scores
+        relayText += Loc.GetString("adventure-webhook-list-low");
         relayText += '\n';
         highScore.Reverse();
-        for (var i = 0; i < 10 && i < highScore.Count; i++)
+        for (var i = 0; i < 10 && highScore.Count > 0; i++)
         {
-            relayText += $"{highScore.First().Item1} {lossText} {highScore.First().Item2} Spesos";
+            if (highScore.First().Item2 > 0)
+                break;
+            var lossText = Loc.GetString("adventure-webhook-top-loss", ("amount", BankSystemExtensions.ToSpesoString(-highScore.First().Item2)));
+            relayText += $"{highScore.First().Item1} {lossText}";
             relayText += '\n';
-            highScore.Remove(highScore.First());
+            highScore.RemoveAt(0);
         }
         ReportRound(relayText);
     }
@@ -113,16 +169,57 @@ public sealed class NfAdventureRuleSystem : GameRuleSystem<AdventureRuleComponen
     {
         if (ev.Player.AttachedEntity is { Valid: true } mobUid)
         {
-            _players.Add((mobUid, ev.Profile.BankBalance));
             EnsureComp<CargoSellBlacklistComponent>(mobUid);
+
+            // Store player info with the bank balance - we have it directly, and BankSystem won't have a cache yet.
+            if (!_players.ContainsKey(mobUid))
+                _players[mobUid] = new PlayerRoundBankInformation(ev.Profile.BankBalance, MetaData(mobUid).EntityName, ev.Player.UserId);
         }
+    }
+
+    private void OnPlayerDetachedEvent(PlayerDetachedEvent ev)
+    {
+        if (ev.Entity is not { Valid: true } mobUid)
+            return;
+
+        if (_players.ContainsKey(mobUid))
+        {
+            if (_players[mobUid].UserId == ev.Player.UserId &&
+                _bank.TryGetBalance(ev.Player, out var bankBalance))
+            {
+                _players[mobUid].EndBalance = bankBalance;
+            }
+        }
+    }
+
+    private void PlayerManagerOnPlayerStatusChanged(object? _, SessionStatusEventArgs e)
+    {
+        // Treat all disconnections as being possibly final.
+        if (e.NewStatus != SessionStatus.Disconnected ||
+            e.Session.AttachedEntity == null)
+            return;
+
+        var mobUid = e.Session.AttachedEntity.Value;
+        if (_players.ContainsKey(mobUid))
+        {
+            if (_players[mobUid].UserId == e.Session.UserId &&
+                _bank.TryGetBalance(e.Session, out var bankBalance))
+            {
+                _players[mobUid].EndBalance = bankBalance;
+            }
+        }
+    }
+
+    private void OnRoundRestart(RoundRestartCleanupEvent ev)
+    {
+        _players.Clear();
     }
 
     protected override void Started(EntityUid uid, AdventureRuleComponent component, GameRuleComponent gameRule, GameRuleStartedEvent args)
     {
         _mapId = GameTicker.DefaultMap;
 
-        _distanceOffset = _configurationManager.GetCVar(NF14CVars.POIDistanceModifier);
+        _distanceOffset = _configurationManager.GetCVar(NFCCVars.POIDistanceModifier);
         _stationCoords = new List<Vector2>();
 
         //First, we need to grab the list and sort it into its respective spawning logics
@@ -138,7 +235,7 @@ public sealed class NfAdventureRuleSystem : GameRuleSystem<AdventureRuleComponen
                 depotProtos.Add(location);
             else if (location.SpawnGroup == "MarketStation")
                 marketProtos.Add(location);
-            else if (location.AlwaysSpawn == true)
+            else if (location.SpawnGroup == "Required")
                 requiredProtos.Add(location);
             else if (location.SpawnGroup == "Optional")
                 optionalProtos.Add(location);
@@ -157,31 +254,8 @@ public sealed class NfAdventureRuleSystem : GameRuleSystem<AdventureRuleComponen
 
         base.Started(uid, component, gameRule, args);
 
-        var dungenTypes = _prototypeManager.EnumeratePrototypes<DungeonConfigPrototype>();
-
-        foreach (var dunGen in dungenTypes)
-        {
-            var seed = _random.Next();
-            var offset = GetRandomPOICoord(3000f, 8500f, true);
-            if (!_map.TryLoad(_mapId, "/Maps/_NF/Dungeon/spaceplatform.yml", out var grids,
-                    new MapLoadOptions
-                    {
-                        Offset = offset
-                    }))
-            {
-                continue;
-            }
-
-            var mapGrid = EnsureComp<MapGridComponent>(grids[0]);
-            _shuttle.AddIFFFlag(grids[0], IFFFlags.HideLabel);
-            _console.WriteLine(null, $"dungeon spawned at {offset}");
-
-            //pls fit the grid I beg, this is so hacky
-            //its better now but i think i need to do a normalization pass on the dungeon configs
-            //because they are all offset. confirmed good size grid, just need to fix all the offsets.
-            _dunGen.GenerateDungeon(dunGen, grids[0], mapGrid, new Vector2i(0, 0), seed);
-            AddStationCoordsToSet(offset);
-        }
+        // Using invalid entity, we don't have a relevant entity to reference here.
+        RaiseLocalEvent(EntityUid.Invalid, new StationsGeneratedEvent(), broadcast: true); // TODO: attach this to a meaningful entity.
     }
 
     private void GenerateDepots(List<PointOfInterestPrototype> depotPrototypes, out List<EntityUid> depotStations)
@@ -191,7 +265,7 @@ public sealed class NfAdventureRuleSystem : GameRuleSystem<AdventureRuleComponen
         //by the number of depots set in our corresponding cvar
 
         depotStations = new List<EntityUid>();
-        var depotCount = _configurationManager.GetCVar(NF14CVars.CargoDepots);
+        var depotCount = _configurationManager.GetCVar(NFCCVars.CargoDepots);
         var rotation = 2 * Math.PI / depotCount;
         var rotationOffset = _random.NextAngle() / depotCount;
 
@@ -223,7 +297,7 @@ public sealed class NfAdventureRuleSystem : GameRuleSystem<AdventureRuleComponen
         //ideal world
 
         marketStations = new List<EntityUid>();
-        var marketCount = _configurationManager.GetCVar(NF14CVars.MarketStations);
+        var marketCount = _configurationManager.GetCVar(NFCCVars.MarketStations);
         _random.Shuffle(marketPrototypes);
         int marketsAdded = 0;
         foreach (var proto in marketPrototypes)
@@ -249,7 +323,7 @@ public sealed class NfAdventureRuleSystem : GameRuleSystem<AdventureRuleComponen
         //and most RP places. This will essentially put them all into a pool to pull from, and still does not use the RNG function.
 
         optionalStations = new List<EntityUid>();
-        var optionalCount = _configurationManager.GetCVar(NF14CVars.OptionalStations);
+        var optionalCount = _configurationManager.GetCVar(NFCCVars.OptionalStations);
         _random.Shuffle(optionalPrototypes);
         int optionalsAdded = 0;
         foreach (var proto in optionalPrototypes)
@@ -337,14 +411,53 @@ public sealed class NfAdventureRuleSystem : GameRuleSystem<AdventureRuleComponen
                 _station.InitializeNewStation(stationProto.Stations[proto.ID], mapUids, stationName);
             }
 
+            // Cache our damping strength
+            float dampingStrength = proto.CanMove ? 0.05f : 999999f;
+
             foreach (var grid in mapUids)
             {
                 var meta = EnsureComp<MetaDataComponent>(grid);
                 _meta.SetEntityName(grid, stationName, meta);
-                _shuttle.SetIFFColor(grid, proto.IffColor);
-                if (proto.IsHidden)
+
+                EnsureComp<IFFComponent>(grid);
+                _shuttle.SetIFFColor(grid, proto.IFFColor);
+                _shuttle.AddIFFFlag(grid, proto.Flags);
+
+                if (!proto.AllowIFFChanges)
                 {
-                    _shuttle.AddIFFFlag(grid, IFFFlags.HideLabel);
+                    _shuttle.SetIFFReadOnly(grid, true);
+                }
+
+                // Ensure damping for each grid in the POI - set the shuttle component if it exists just to be safe
+                var physics = EnsureComp<PhysicsComponent>(grid);
+                _physics.SetAngularDamping(grid, physics, dampingStrength);
+                _physics.SetLinearDamping(grid, physics, dampingStrength);
+                if (TryComp<ShuttleComponent>(grid, out var shuttle))
+                {
+                    shuttle.AngularDamping = dampingStrength;
+                    shuttle.LinearDamping = dampingStrength;
+                }
+
+                if (proto.BusStop)
+                {
+                    EnsureComp<StationTransitComponent>(grid);
+                }
+
+                if (proto.GridProtection != GridProtectionFlags.None)
+                {
+                    var prot = EnsureComp<ProtectedGridComponent>(grid);
+                    if (proto.GridProtection.HasFlag(GridProtectionFlags.FloorRemoval))
+                        prot.PreventFloorRemoval = true;
+                    if (proto.GridProtection.HasFlag(GridProtectionFlags.FloorPlacement))
+                        prot.PreventFloorPlacement = true;
+                    if (proto.GridProtection.HasFlag(GridProtectionFlags.RcdUse))
+                        prot.PreventRCDUse = true;
+                    if (proto.GridProtection.HasFlag(GridProtectionFlags.EmpEvents))
+                        prot.PreventEmpEvents = true;
+                    if (proto.GridProtection.HasFlag(GridProtectionFlags.Explosions))
+                        prot.PreventExplosions = true;
+                    if (proto.GridProtection.HasFlag(GridProtectionFlags.ArtifactTriggers))
+                        prot.PreventArtifactTriggers = true;
                 }
             }
             gridUid = mapUids[0];
@@ -356,8 +469,8 @@ public sealed class NfAdventureRuleSystem : GameRuleSystem<AdventureRuleComponen
 
     private Vector2 GetRandomPOICoord(float unscaledMinRange, float unscaledMaxRange, bool scaleRange)
     {
-        int numRetries = int.Max(_configurationManager.GetCVar(NF14CVars.POIPlacementRetries), 0);
-        float minDistance = float.Max(_configurationManager.GetCVar(NF14CVars.MinPOIDistance), 0); // Constant at the end to avoid NaN weirdness
+        int numRetries = int.Max(_configurationManager.GetCVar(NFCCVars.POIPlacementRetries), 0);
+        float minDistance = float.Max(_configurationManager.GetCVar(NFCCVars.MinPOIDistance), 0); // Constant at the end to avoid NaN weirdness
 
         Vector2 coords = _random.NextVector2(unscaledMinRange, unscaledMaxRange);
         if (scaleRange)
@@ -392,10 +505,10 @@ public sealed class NfAdventureRuleSystem : GameRuleSystem<AdventureRuleComponen
         _stationCoords.Add(coords);
     }
 
-    private async Task ReportRound(String message,  int color = 0x77DDE7)
+    private async Task ReportRound(string message, int color = 0x77DDE7)
     {
         Logger.InfoS("discord", message);
-        String webhookUrl = _configurationManager.GetCVar(CCVars.DiscordLeaderboardWebhook);
+        String webhookUrl = _configurationManager.GetCVar(NFCCVars.DiscordLeaderboardWebhook);
         if (webhookUrl == string.Empty)
             return;
 
@@ -405,7 +518,7 @@ public sealed class NfAdventureRuleSystem : GameRuleSystem<AdventureRuleComponen
             {
                 new()
                 {
-                    Title = Loc.GetString("adventure-list-start"),
+                    Title = Loc.GetString("adventure-webhook-list-start"),
                     Description = message,
                     Color = color,
                 },
