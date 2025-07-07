@@ -26,6 +26,7 @@ public sealed partial class AnomalySystem
         SubscribeLocalEvent<AnomalyVesselComponent, ResearchServerGetPointsPerSecondEvent>(OnVesselGetPointsPerSecond);
         SubscribeLocalEvent<AnomalyShutdownEvent>(OnShutdown);
         SubscribeLocalEvent<AnomalyStabilityChangedEvent>(OnStabilityChanged);
+        SubscribeLocalEvent<AnomalyVesselComponent, EntParentChangedMessage>(OnVesselParentChanged); // Frontier
     }
 
     private void OnStabilityChanged(ref AnomalyStabilityChangedEvent args)
@@ -83,6 +84,16 @@ public sealed partial class AnomalySystem
         if (!TryComp<AnomalyComponent>(anomaly, out var anomalyComponent) || anomalyComponent.ConnectedVessel != null)
             return;
 
+        // Frontier: check anomaly is on the same grid
+        if (!TryComp(uid, out TransformComponent? xform)
+            || !TryComp(anomaly, out TransformComponent? anomXform)
+            || xform.GridUid != anomXform.GridUid)
+        {
+            Popup.PopupEntity(Loc.GetString("anomaly-vessel-component-off-grid"), uid);
+            return;
+        }
+        // End Frontier: check anomaly is on the same grid
+
         component.Anomaly = scanner.ScannedAnomaly;
         anomalyComponent.ConnectedVessel = uid;
         _radiation.SetSourceEnabled(uid, true);
@@ -95,7 +106,16 @@ public sealed partial class AnomalySystem
         if (!this.IsPowered(uid, EntityManager) || component.Anomaly is not {} anomaly)
             return;
 
-        args.Points += (int) (GetAnomalyPointValue(anomaly) * component.PointMultiplier);
+        var rawPointValue = GetAnomalyPointValue(anomaly); // Frontier: cache value
+        args.Points += (int)(rawPointValue * component.PointMultiplier); // Frontier: GetAnomalyPointValue() < rawPointValue
+        // Frontier: increase anomaly points
+        if (TryComp<AnomalyComponent>(anomaly, out var anomalyComp)
+            && anomalyComp.LastTickPointsEarned != Timing.CurTick)
+        {
+            anomalyComp.LastTickPointsEarned = Timing.CurTick;
+            anomalyComp.PointsEarned += rawPointValue;
+        }
+        // End Frontier
     }
 
     private void OnVesselAnomalyShutdown(ref AnomalyShutdownEvent args)
@@ -196,4 +216,26 @@ public sealed partial class AnomalySystem
             vessel.NextBeep = beepInterval + Timing.CurTime;
         }
     }
+
+    // Frontier: disable anomaly if it goes off-grid
+    private void OnVesselParentChanged(Entity<AnomalyVesselComponent> ent, ref EntParentChangedMessage args)
+    {
+        if (TerminatingOrDeleted(ent) || ent.Comp.Anomaly is not { } anom)
+            return;
+
+        if (!TryComp(ent, out TransformComponent? xform)
+            || !TryComp(anom, out TransformComponent? anomXform)
+            || xform.GridUid != anomXform.GridUid)
+        {
+            ent.Comp.Anomaly = null;
+            _radiation.SetSourceEnabled(ent.Owner, false);
+            if (TryComp(anom, out AnomalyComponent? anomComp))
+            {
+                anomComp.ConnectedVessel = null;
+            }
+            UpdateVesselAppearance(ent, ent.Comp);
+            Popup.PopupEntity(Loc.GetString("anomaly-vessel-component-anomaly-cleared"), ent);
+        }
+    }
+    // End Frontier: disable anomaly if it goes off-grid
 }

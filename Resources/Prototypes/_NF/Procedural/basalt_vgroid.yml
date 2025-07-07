@@ -42,7 +42,7 @@
     - !type:OreDunGen
       entityMask:
       - WallRockBasalt
-      entity: BasaltElementalSpawner
+      entity: NFBasaltElementalSpawner
       count: 100
       minGroupSize: 1
       maxGroupSize: 1
@@ -106,7 +106,7 @@
     - !type:OreDunGen
       entityMask:
       - WallRockBasalt
-      entity: WallBasaltCobblebrickNF
+      entity: NFWallBasaltCobblebrick
       count: 100
       minGroupSize: 6
       maxGroupSize: 16
@@ -127,7 +127,7 @@
     - !type:OreDunGen
       entityMask:
       - WallRockBasalt
-      entity: WallRockBasaltBluespace
+      entity: NFWallRockBasaltBluespace
       count: 10
       minGroupSize: 1
       maxGroupSize: 1
@@ -135,7 +135,7 @@
     # - !type:OreDunGen
       # tileMask:
       # - FloorBasalt
-      # entity: FloraRockSolid01
+      # entity: FloraRockSolid
       # count: 20
       # minGroupSize: 1
       # maxGroupSize: 1
@@ -143,8 +143,8 @@
     - !type:OreDunGen
       tileMask:
       - FloorBasalt
-      entity: SpawnMobMercenaryT3
-      count: 25
+      entity: SpawnMobMercenaryEVAT3
+      count: 5
       minGroupSize: 1
       maxGroupSize: 1
 
@@ -205,7 +205,7 @@
   maxCount: 3
   layers:
   - !type:ExteriorDunGen
-    proto: LavaMercenary
+    proto: NFLavaMercenary
   - !type:EntityTableDunGen
     minCount: 25
     maxCount: 40
@@ -237,10 +237,28 @@
     table: !type:NestedSelector
       tableId: SalvageEquipmentSpawnerValuable
   - !type:MobsDunGen
+    minCount: 3
+    maxCount: 6
+    groups:
+    - id: SpawnMobMercenaryEVAT1
+      amount: 2
+  - !type:MobsDunGen
     minCount: 8
     maxCount: 15
     groups:
-    - id: SpawnMobMercenaryT2
+    - id: SpawnMobMercenaryEVAT2
+      amount: 1
+  - !type:MobsDunGen
+    minCount: 1
+    maxCount: 3
+    groups:
+    - id: SpawnMobMercenaryEVAT3
+      amount: 1
+  - !type:MobsDunGen
+    minCount: 0
+    maxCount: 1
+    groups:
+    - id: SpawnMobMercenaryCaptainEVA
       amount: 1
 
 #- type: dungeonConfig
@@ -309,9 +327,9 @@
       allowedTiles:
         - FloorBasalt
       entities:
-        - FloraRockSolid01
-        - FloraRockSolid02
-        - FloraRockSolid03
+        - FloraRockSolid
+        - FloraRockSolid
+        - FloraRockSolid
         - CrystalOrange
     - !type:BiomeEntityLayer
       threshold: 0.2
