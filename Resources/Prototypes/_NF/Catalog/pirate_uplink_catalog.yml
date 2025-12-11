@@ -557,3 +557,58 @@
       whitelist:
         tags:
           - PirateUplink
+
+- type: listing
+  id: UplinkPirateCaptainStamp
+  name:  uplink-pirate-captain-stamp-name
+  description: uplink-pirate-stamp-desc
+  productEntity: RubberStampPirateCaptain
+  icon: { sprite: _NF/Objects/Misc/stamps.rsi, state: stamp-pirate-command }
+  cost:
+    Doubloon: 1
+  categories:
+    - UplinkPirateUtility
+  conditions:
+    - !type:StoreWhitelistCondition
+      whitelist:
+        tags:
+          - PirateUplink
+    - !type:BuyerJobCondition
+      whitelist:
+        - NFPirateCaptain
+
+- type: listing
+  id: UplinkPirateFirstMateStamp
+  name:  uplink-pirate-first-mate-stamp-name
+  description: uplink-pirate-stamp-desc
+  productEntity: RubberStampPirateFirstMate
+  icon: { sprite: _NF/Objects/Misc/stamps.rsi, state: stamp-pirate-command }
+  cost:
+    Doubloon: 1
+  categories:
+    - UplinkPirateUtility
+  conditions:
+    - !type:StoreWhitelistCondition
+      whitelist:
+        tags:
+          - PirateUplink
+    - !type:BuyerJobCondition
+      whitelist:
+        - NFPirateCaptain
+        - NFPirateFirstMate
+
+- type: listing
+  id: UplinkPirateStamp
+  name:  uplink-pirate-stamp-name
+  description: uplink-pirate-stamp-desc
+  productEntity: RubberStampPirate
+  icon: { sprite: _NF/Objects/Misc/stamps.rsi, state: stamp-pirate }
+  cost:
+    Doubloon: 1
+  categories:
+    - UplinkPirateUtility
+  conditions:
+    - !type:StoreWhitelistCondition
+      whitelist:
+        tags:
+          - PirateUplink

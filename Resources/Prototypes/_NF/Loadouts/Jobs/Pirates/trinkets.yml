@@ -12,3 +12,27 @@
   storage:
     back:
     - NFPouchPirateCaptain
+    
+#Stamps
+- type: loadout
+  id: PirateRubberStampPirateCaptain
+  price: 500
+  storage:
+    back:
+    - RubberStampPirateCaptain
+
+- type: loadout
+  id: PirateRubberStampPirate
+  price: 500
+  storage:
+    back:
+    - RubberStampPirate
+
+- type: loadout
+  id: PirateRubberStampPirateFirstMate
+  price: 500
+  storage:
+    back:
+    - RubberStampPirateFirstMate
+
+

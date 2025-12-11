@@ -121,3 +121,49 @@
   - type: Sprite
     sprite: _NF/Objects/Misc/stamps.rsi
     state: stamp-plant-manager
+    
+#Pirate Stamps    
+- type: entity
+  name: pirate captain's stamp
+  parent: [RubberStampBase, BaseC3PirateContrabandNoValue]
+  id: RubberStampPirateCaptain
+  description: A with gold adorned wooden stamp that strikes fear in the hearts of landlubbers!
+  categories: [ DoNotMap ]
+  components:
+  - type: Stamp
+    stampedName: stamp-component-stamped-name-pirate-captain
+    stampedColor: "#510909"
+    stampState: "paper_stamp-nf-pirate"
+  - type: Sprite
+    sprite: _NF/Objects/Misc/stamps.rsi
+    state: stamp-pirate-command
+
+- type: entity
+  name: pirate first mate's stamp
+  parent: [RubberStampBase, BaseC3PirateContrabandNoValue]
+  id: RubberStampPirateFirstMate
+  description: A with gold adorned wooden stamp that strikes fear in the hearts of landlubbers!
+  categories: [ DoNotMap ]
+  components:
+  - type: Stamp
+    stampedName: stamp-component-stamped-name-pirate-first-mate
+    stampedColor: "#510909"
+    stampState: "paper_stamp-nf-pirate"
+  - type: Sprite
+    sprite: _NF/Objects/Misc/stamps.rsi
+    state: stamp-pirate-command
+
+- type: entity
+  name: pirate's stamp
+  parent: [RubberStampBase, BaseC3PirateContrabandNoValue]
+  id: RubberStampPirate
+  description: A wooden stamp that strikes fear in the hearts of landlubbers!
+  categories: [ DoNotMap ]
+  components:
+  - type: Stamp
+    stampedName: stamp-component-stamped-name-pirate
+    stampedColor: "#510909"
+    stampState: "paper_stamp-nf-pirate"
+  - type: Sprite
+    sprite: _NF/Objects/Misc/stamps.rsi
+    state: stamp-pirate

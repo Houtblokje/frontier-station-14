@@ -546,7 +546,7 @@
   - ContractorBoxSurvival
   - NFPirateFirstMatePDA
   - ContractorWallet
-  - PirateBackpackItems
+  - PirateFirstMateBackpackItems
   - ContractorHandItems
   - NFSpeciesSpecific
   canCustomizeName: true # pseudonym?

@@ -68,6 +68,7 @@
   maxLimit: 6
   loadouts:
   - PirateNFPouchPirate
+  - PirateRubberStampPirate
   subgroups:
   - ContractorBackpackItems
 
@@ -126,6 +127,7 @@
   maxLimit: 6
   loadouts:
   - PirateNFPouchPirateCaptain
+  - PirateRubberStampPirateCaptain
   subgroups:
   - ContractorBackpackItems
 
@@ -159,3 +161,14 @@
   - NFPirateFirstMateNFShantymanPDA
   fallbacks:
   - NFPirateFirstMateNFPirateFirstMatePDA
+
+- type: loadoutGroup
+  id: PirateFirstMateBackpackItems
+  name: loadout-group-contractor-backpack-items
+  minLimit: 0
+  maxLimit: 6
+  loadouts:
+  - PirateNFPouchPirate
+  - PirateRubberStampPirateFirstMate
+  subgroups:
+  - ContractorBackpackItems
