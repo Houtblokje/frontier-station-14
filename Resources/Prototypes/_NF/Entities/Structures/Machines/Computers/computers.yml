@@ -580,3 +580,36 @@
   components:
   - type: NFDroneConsole
     id: Trade
+
+- type: entity
+  parent: ComputerComms
+  id: PirateComputerComms
+  name: pirate communications computer
+  description: A computer capable of remotely hacking into the station's communications systems. Using this to make an announcement will alert the station to your presence. Appears to be held together by 50 year old unlicensed software and ducttape.
+  components:
+  - type: Sprite
+    layers:
+    - map: ["computerLayerBody"]
+      state: computer
+    - map: ["computerLayerKeyboard"]
+      state: generic_keyboard
+    - map: ["computerLayerScreen"]
+      state: comm_syndie
+    - map: ["computerLayerKeys"]
+      state: syndie_key
+    - map: [ "enum.WiresVisualLayers.MaintenancePanel" ]
+      state: generic_panel_open
+  - type: AccessReader
+    access: [[ "PirateCaptain" ]]
+  - type: CommunicationsConsole
+    title: comms-console-announcement-title-pirate
+    color: "#C83737"
+    canShuttle: false
+    global: true #announce to everyone they're about to fuck shit up
+    sound: /Audio/Ambience/Antag/pirate_start.ogg
+  - type: Computer
+    board: PirateCommsComputerCircuitboard
+  - type: PointLight
+    radius: 1.5
+    energy: 4.0
+    color: "#f71713"
