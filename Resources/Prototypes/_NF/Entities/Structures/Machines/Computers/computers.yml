@@ -603,10 +603,10 @@
     access: [[ "PirateCaptain" ]]
   - type: CommunicationsConsole
     title: comms-console-announcement-title-pirate
-    color: "#C83737"
+    color: "#C83737" #Color of the pirate outpost
     canShuttle: false
     global: true #announce to everyone they're about to fuck shit up
-    sound: /Audio/Ambience/Antag/pirate_start.ogg
+    sound: /Audio/Announcements/war.ogg #Not ideal, I would love a sound that is more pirat-y and less nukie than the war sound, and more identifiable than the SRs DUMDUMDUM.
   - type: Computer
     board: PirateCommsComputerCircuitboard
   - type: PointLight
