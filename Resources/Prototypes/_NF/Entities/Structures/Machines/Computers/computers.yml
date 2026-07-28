@@ -588,15 +588,16 @@
   description: A computer capable of remotely hacking into the station's communications systems. Using this to make an announcement will alert the station to your presence. Appears to be held together by 50 year old unlicensed software and ducttape.
   components:
   - type: Sprite
+    sprite: _NF/Structures/Machines/computers.rsi
     layers:
     - map: ["computerLayerBody"]
-      state: computer
+      state: computer_blackmarket
     - map: ["computerLayerKeyboard"]
       state: generic_keyboard
     - map: ["computerLayerScreen"]
-      state: comm_syndie
+      state: piratebounty_pad
     - map: ["computerLayerKeys"]
-      state: syndie_key
+      state: blackmarket_key
     - map: [ "enum.WiresVisualLayers.MaintenancePanel" ]
       state: generic_panel_open
   - type: AccessReader

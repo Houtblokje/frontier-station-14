@@ -942,11 +942,11 @@
       sprite: _NF/Structures/Machines/computer_tabletop.rsi
       state: generic_keyboard_tabletop
     - map: ["computerLayerScreen"]
-      sprite: Structures/Machines/computers.rsi
-      state: comm_syndie
+      sprite: _NF/Structures/Machines/computers.rsi
+      state: piratebounty
     - map: ["computerLayerKeys"]
-      sprite: Structures/Machines/computers.rsi
-      state: syndie_key
+      sprite: _NF/Structures/Machines/computers.rsi
+      state: blackmarket_key
     - map: [ "enum.WiresVisualLayers.MaintenancePanel" ]
       sprite: Structures/Machines/computers.rsi
       state: generic_panel_open
